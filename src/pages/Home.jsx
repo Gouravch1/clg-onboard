@@ -3,6 +3,11 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import Particles from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { createGlobalStyle } from "styled-components";
+import partner1 from '../assets/partner1.png';
+import partner2 from '../assets/partner2.jpeg'; // Note the .jpeg extension
+import partner3 from '../assets/partner3.png';
+import partner4 from '../assets/partner9.jpeg';
+import partner5 from '../assets/partner8.png';
 
 // Enhanced animations without GSAP
 const fadeInUp = keyframes`
@@ -713,81 +718,103 @@ const smoothScroll = {
   }
 };
 
-const PartnersSection = styled.div`
-  width: 100%;
-  padding: 6rem 0;
-  position: relative;
-  overflow: hidden;
+const PartnersSection = styled.section`
+  padding: 2rem 0;
+  margin: 2rem 0;
 `;
 
 const PartnersTitle = styled.h2`
-  font-family: 'Oswald', sans-serif;
-  font-size: min(3.5rem, 10vw);
-  font-weight: 400;
+  font-size: 2.5rem;
+  color: white;
   text-align: center;
-  margin-bottom: 4rem;
+  margin-bottom: 1.5rem;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 450;
   letter-spacing: 2px;
+  text-transform: uppercase;
+  
+  &::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: #4ECCA3;
+    margin: 0.5rem auto;
+  }
 `;
 
 const PartnersTrack = styled.div`
-  display: flex;
-  width: fit-content;
-  animation: ${scrollLeft} 30s linear infinite;
-  &:hover {
-    animation-play-state: paused;
-  }
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 `;
 
 const PartnersContainer = styled.div`
+  position: relative;
+  width: 100%;
   display: flex;
-  gap: 4rem;
-  padding: 2rem;
-  
-  /* Create a duplicate set of items */
-  ${PartnersTrack} {
-    display: flex;
-    gap: 4rem;
-  }
-`;
-
-const PartnerCard = styled.div`
-  display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2rem;
+  padding: 0 60px;
+`;
+
+const PartnerBox = styled.div`
   width: 200px;
   height: 200px;
   background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
   transition: all 0.3s ease;
+  font-family: 'Space Grotesk', sans-serif;
   
   &:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
     background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(78, 204, 163, 0.5);
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-  }
-
-  .partner-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-
-  .partner-name {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 1rem;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   }
 `;
 
-// Add this new component for magnetic effect
-const MagneticWrapper = styled.div`
+const PartnerIcon = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const Partners = styled.div`
+  display: inline-flex;
+  gap: 4rem;
+  transition: transform 0.3s ease;
+`;
+
+const NavButton = styled.button`
   position: relative;
-  display: inline-block;
-  transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+  z-index: 2;
+
+  &:hover {
+    background: rgba(78, 204, 163, 0.2);
+  }
 `;
 
 const Footer = styled.footer`
@@ -845,7 +872,7 @@ const FooterColumn = styled.div`
       position: absolute;
       bottom: -5px;
       left: 0;
-      width: 100%;
+  width: 100%;
       height: 2px;
       background: linear-gradient(90deg, #4ECCA3, transparent);
       transform: scaleX(0);
@@ -941,7 +968,7 @@ const SocialIcon = styled.a`
     z-index: 1;
     transition: transform 0.3s ease;
   }
-
+  
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(78, 204, 163, 0.3);
@@ -969,8 +996,8 @@ const Copyright = styled.div`
     color: #4ECCA3;
     text-decoration: none;
     transition: color 0.3s ease;
-
-    &:hover {
+  
+  &:hover {
       color: white;
     }
   }
@@ -1160,6 +1187,29 @@ function Home() {
     window.requestAnimationFrame(step);
   };
 
+  const handlePartnerScroll = (direction) => {
+    const container = document.querySelector('.partners-container');
+    const partners = container.querySelector('.partners');
+    
+    if (container) {
+      const scrollAmount = 300;
+      const currentScroll = container.scrollLeft;
+      const newScroll = direction === 'right' 
+        ? currentScroll + scrollAmount 
+        : currentScroll - scrollAmount;
+      
+      container.scrollTo({
+        left: newScroll,
+        behavior: 'smooth'
+      });
+      
+      // Debug logs
+      console.log('Scrolling:', direction);
+      console.log('Current scroll:', currentScroll);
+      console.log('New scroll:', newScroll);
+    }
+  };
+
   return (
     <PageWrapper>
       <GlobalStyle />
@@ -1308,22 +1358,77 @@ function Home() {
 
         <PartnersSection>
           <PartnersTitle>Our Partners</PartnersTitle>
-          <PartnersContainer>
-            <PartnersTrack>
-              {partners.map((partner, index) => (
-                <PartnerCard key={`partner-${index}`}>
-                  <span className="partner-icon">{partner.icon}</span>
-                  <span className="partner-name">{partner.name}</span>
-                </PartnerCard>
-              ))}
-              {partners.map((partner, index) => (
-                <PartnerCard key={`partner-duplicate-${index}`}>
-                  <span className="partner-icon">{partner.icon}</span>
-                  <span className="partner-name">{partner.name}</span>
-                </PartnerCard>
-              ))}
-            </PartnersTrack>
-          </PartnersContainer>
+          <div style={{ position: 'relative', width: '100%', padding: '0 40px' }}>
+            <button 
+              onClick={() => handlePartnerScroll('left')}
+              style={{
+                position: 'absolute',
+                left: '-20px',  // Adjusted position
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                zIndex: 10,
+                fontSize: '20px'
+              }}
+            >
+              &#8249;
+            </button>
+
+            <div 
+              className="partners-container"
+              style={{
+                overflowX: 'hidden',
+                whiteSpace: 'nowrap',
+                scrollBehavior: 'smooth',
+                position: 'relative'
+              }}
+            >
+              <div className="partners" style={{ display: 'inline-flex', gap: '4rem' }}>
+                <PartnerBox>
+                  <PartnerIcon src={partner1} alt="Partner 1" />
+                </PartnerBox>
+                <PartnerBox>
+                  <PartnerIcon src={partner2} alt="Partner 2" />
+                </PartnerBox>
+                <PartnerBox>
+                  <PartnerIcon src={partner3} alt="Partner 3" />
+                </PartnerBox>
+                <PartnerBox>
+                  <PartnerIcon src={partner4} alt="Partner 4" />
+                </PartnerBox>
+                <PartnerBox>
+                  <PartnerIcon src={partner5} alt="Partner 5" />
+                </PartnerBox>
+              </div>
+            </div>
+
+            <button 
+              onClick={() => handlePartnerScroll('right')}
+              style={{
+                position: 'absolute',
+                right: '-20px',  // Adjusted position
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                color: 'white',
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                zIndex: 10,
+                fontSize: '20px'
+              }}
+            >
+              &#8250;
+            </button>
+          </div>
         </PartnersSection>
       </MissionSection>
 
@@ -1357,7 +1462,7 @@ function Home() {
             </ContactInfo>
             <ContactInfo>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24" height="24">
-                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
+                <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-7 12h-2v-2h2v2zm0-4h-2V6h2v4z"/>
               </svg>
               1-800-ALTRUISM
             </ContactInfo>
@@ -1371,7 +1476,7 @@ function Home() {
             <SocialLinks>
               <SocialIcon href="https://twitter.com" target="_blank" aria-label="Twitter">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
+                  <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.566.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
                 </svg>
               </SocialIcon>
               <SocialIcon href="https://linkedin.com" target="_blank" aria-label="LinkedIn">
@@ -1381,7 +1486,7 @@ function Home() {
               </SocialIcon>
               <SocialIcon href="https://instagram.com" target="_blank" aria-label="Instagram">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 2.618 6.78 6.98 6.98 1.281.059 1.69-.073 4.948-.073zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </SocialIcon>
             </SocialLinks>
